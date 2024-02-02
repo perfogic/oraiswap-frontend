@@ -231,7 +231,7 @@ export const getWalletByNetworkCosmosFromStorage = (key = 'persist:root'): Walle
     const result = localStorage.getItem(key);
     const parsedResult = JSON.parse(result);
     const wallet = JSON.parse(parsedResult.wallet);
-    return wallet.walletsByNetwork.cosmos ?? 'keplr';
+    return wallet.walletsByNetwork.cosmos;
   } catch (error) {
     console.log('error getWalletByNetworksFromStorage: ', error);
   }
