@@ -18,6 +18,7 @@ import { CoinGeckoPrices } from 'hooks/useCoingecko';
 import { getCosmWasmClient } from 'libs/cosmjs';
 import { TokenInfo } from 'types/token';
 import { TToastType, displayToast } from 'components/Toasts/Toast';
+import { WalletType as WalletCosmosType } from '@oraichain/oraidex-common/build/constant';
 
 export const checkRegex = (str: string, regex?: RegExp) => {
   const re = regex ?? /^[a-zA-Z\-]{3,12}$/;
@@ -189,6 +190,31 @@ export const processWsResponseMsg = (message: any): string => {
 
 export const generateError = (message: string) => {
   return { ex: { message } };
+};
+
+export const initClientMobile = async (type: WalletCosmosType) => {
+  try {
+    await switchWalletCosmos(type);
+
+    const keplr = await window.Keplr.getKeplr();
+    // suggest our chain
+    if (keplr) {
+      for (const networkId of [network.chainId]) {
+        try {
+          await window.Keplr.suggestChain(networkId);
+        } catch (error) {
+          console.log({ error });
+        }
+      }
+      const { client } = await getCosmWasmClient({ chainId: network.chainId });
+      window.client = client;
+    }
+  } catch (ex) {
+    console.log('error initClient:', ex);
+    displayToast(TToastType.KEPLR_FAILED, {
+      message: 'Cannot initialize wallet client. Please notify the developers to fix this problem!'
+    });
+  }
 };
 
 export const initEthereum = async () => {

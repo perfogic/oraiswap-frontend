@@ -22,6 +22,9 @@ import FutureCompetition from 'components/FutureCompetitionModal';
 import './index.scss';
 import Instruct from './Instruct';
 import Menu from './Menu';
+import { useTronEventListener } from 'hooks/useTronLink';
+import Keplr from 'libs/keplr';
+import { ethers } from 'ethers';
 
 const App = () => {
   const [address, setOraiAddress] = useConfigReducer('address');
@@ -36,7 +39,7 @@ const App = () => {
   const [, setCosmosAddress] = useConfigReducer('cosmosAddress');
   const mobileMode = isMobile();
   const ethOwallet = window.eth_owallet;
-  // useTronEventListener();
+  useTronEventListener();
 
   // TODO: polyfill evm, tron, need refactor
   useEffect(() => {
@@ -147,7 +150,50 @@ const App = () => {
   const keplrHandler = async () => {
     try {
       let metamaskAddress, oraiAddress, tronAddress;
-      if (walletByNetworks.cosmos) {
+
+      if (mobileMode) {
+        // polyfill for mobile owallet
+        window.tronWebDapp = window.tronWeb;
+        window.tronLinkDapp = window.tronLink;
+        window.ethereumDapp = window.ethereum;
+        window.Keplr = new Keplr('owallet');
+        window.Metamask = new Metamask(window.tronWebDapp);
+
+        // get evm addr
+        const [address] = await window.ethereum!.request({
+          method: 'eth_requestAccounts',
+          params: []
+        });
+        if (address && address !== metamaskAddress) {
+          metamaskAddress = address;
+          setMetamaskAddress(ethers.utils.getAddress(address));
+        }
+
+        // get tron addr
+        await window.tronLink.request({
+          method: 'tron_requestAccounts'
+        });
+        const base58Address = window.tronWeb?.defaultAddress?.base58;
+        if (base58Address && base58Address !== tronAddress) {
+          tronAddress = base58Address;
+          setTronAddress(base58Address);
+        }
+      } else {
+        if (walletByNetworks.evm === 'owallet') {
+          metamaskAddress = await window.Metamask.getEthAddress();
+          if (metamaskAddress) setMetamaskAddress(metamaskAddress);
+        }
+        if (walletByNetworks.tron === 'owallet') {
+          const res = await window.tronLinkDapp.request({
+            method: 'tron_requestAccounts'
+          });
+          // @ts-ignore
+          tronAddress = res?.base58;
+          if (tronAddress) setTronAddress(tronAddress);
+        }
+      }
+
+      if (walletByNetworks.cosmos || mobileMode) {
         oraiAddress = await window.Keplr.getKeplrAddr();
         if (oraiAddress) {
           const { listAddressCosmos } = await getListAddressCosmos(oraiAddress);
@@ -156,27 +202,13 @@ const App = () => {
         }
       }
 
-      if (walletByNetworks.evm === 'owallet') {
-        metamaskAddress = await window.Metamask.getEthAddress();
-        if (metamaskAddress) setMetamaskAddress(metamaskAddress);
-      }
-
-      if (walletByNetworks.tron === 'owallet') {
-        const res = await window.tronLinkDapp.request({
-          method: 'tron_requestAccounts'
-        });
-        // @ts-ignore
-        tronAddress = res?.base58;
-        if (tronAddress) setTronAddress(tronAddress);
-      }
-
       loadTokenAmounts({
         oraiAddress,
         metamaskAddress,
         tronAddress
       });
     } catch (error) {
-      console.log('Error: ', error.message);
+      console.log('Error: ', error);
       setStatusChangeAccount(false);
       displayToast(TToastType.TX_INFO, {
         message: `There is an unexpected error with Cosmos wallet. Please try again!`
