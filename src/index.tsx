@@ -14,8 +14,10 @@ import { persistor, store } from 'store/configure';
 import './index.scss';
 import App from './layouts/App';
 import ScrollToTop from './layouts/ScrollToTop';
-import { getCosmWasmClient } from 'libs/cosmjs';
+import { initClientMobile } from 'libs/utils';
 import { getWalletByNetworkCosmosFromStorage } from 'helper';
+import { getCosmWasmClient } from 'libs/cosmjs';
+import { isMobile } from '@walletconnect/browser-utils';
 
 const queryClient = new QueryClient();
 
@@ -68,6 +70,7 @@ const initApp = async () => {
     const { client } = await getCosmWasmClient({ chainId: network.chainId });
     window.client = client;
   }
+  isMobile() && (await initClientMobile('owallet'));
 };
 
 initApp();

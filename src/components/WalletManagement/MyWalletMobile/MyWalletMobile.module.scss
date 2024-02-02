@@ -20,7 +20,7 @@
   border-left: 1px solid;
 
   @include mobile {
-    width: 50%;
+    width: 60%;
   }
 
   @include theme() {
@@ -186,7 +186,7 @@
   right: -25%;
 
   @include mobile {
-    right: -50%;
+    right: -60%;
   }
 }
 
