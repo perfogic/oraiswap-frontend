@@ -2968,7 +2968,7 @@
     link-module-alias "^1.2.0"
     shx "^0.3.4"
 
-"@oraichain/oraidex-common-ui@latest":
+"@oraichain/oraidex-common-ui@1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@oraichain/oraidex-common-ui/-/oraidex-common-ui-1.0.6.tgz#914e75ba834e01e1e76165bf745cf137bb5b05d7"
   integrity sha512-P+Zw99QRvOIuRLb+5/DyIzCEUqHI+41Vk1IYJ24HGnXofJPZc4dZE2uPv8Boe+SojcFhfGlPr2xbPdE1DCoWMg==

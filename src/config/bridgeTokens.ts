@@ -84,11 +84,6 @@ export const evmTokens = uniqBy(
   (c) => c.denom
 );
 
-export const kawaiiTokens = uniqBy(
-  cosmosTokens.filter((token) => token.chainId === 'kawaii_6886-1'),
-  (c) => c.denom
-);
-
 const notAllowSwapCoingeckoIds = ['kawaii-islands', 'milky-token', 'injective-protocol'];
 // universal swap. Currently we dont support from tokens that are not using the ibc wasm channel
 const notAllowSwapFromChainIds = [

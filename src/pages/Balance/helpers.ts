@@ -16,9 +16,10 @@ import {
   calculateTimeoutTimestamp,
   getEncodedExecuteContractMsgs,
   parseTokenInfo,
-  toAmount
+  toAmount,
+  kawaiiTokens
 } from '@oraichain/oraidex-common';
-import { flattenTokens, kawaiiTokens, tokenMap } from 'config/bridgeTokens';
+import { flattenTokens, tokenMap } from 'config/bridgeTokens';
 import { chainInfos } from 'config/chainInfos';
 import { network } from 'config/networks';
 import { feeEstimate, getNetworkGasPrice } from 'helper';
