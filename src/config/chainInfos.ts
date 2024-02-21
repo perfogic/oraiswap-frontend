@@ -1,11 +1,15 @@
-import { Bech32Config, ChainInfo, Currency, FeeCurrency } from '@keplr-wallet/types';
 import {
   TokenItemType,
   tokens,
   chainInfos as customChainInfos,
   OsmoToken,
   AtomToken,
-  InjectiveToken
+  InjectiveToken,
+  OraiToken,
+  OraiBToken,
+  KawaiiToken,
+  CustomChainInfo,
+  defaultBech32Config
 } from '@oraichain/oraidex-common';
 import { ReactComponent as AiriIcon } from 'assets/icons/airi.svg';
 import { ReactComponent as AtomIcon } from 'assets/icons/atom_cosmos.svg';
@@ -68,7 +72,6 @@ import {
   USDT_ETH_CONTRACT,
   NEUTARO_ORAICHAIN_DENOM
 } from '@oraichain/oraidex-common';
-import { BridgeAppCurrency, CustomChainInfo, defaultBech32Config } from '@oraichain/oraidex-common';
 import { flatten } from 'lodash';
 
 const [otherChainTokens, oraichainTokens] = tokens;
@@ -225,6 +228,7 @@ export const chainIcons: ChainIcon[] = [
     IconLight: NeutaroIcon
   }
 ];
+
 export const mapListWithIcon = (list: any[], listIcon: ChainIcon[] | TokenIcon[], key: 'chainId' | 'coinGeckoId') => {
   return list.map((item) => {
     let Icon = OraiIcon;
@@ -254,45 +258,6 @@ export const otherTokensWithIcon = mapListWithIcon(otherChainTokens, tokensIcon,
 export const tokensWithIcon = [otherTokensWithIcon, oraichainTokensWithIcon];
 export const flattenTokensWithIcon = flatten(tokensWithIcon);
 
-export const OraiToken: BridgeAppCurrency = {
-  coinDenom: 'ORAI',
-  coinMinimalDenom: 'orai',
-  coinDecimals: 6,
-  coinGeckoId: 'oraichain-token',
-  Icon: OraiIcon,
-  IconLight: OraiLightIcon,
-  bridgeTo: ['0x38', '0x01', 'injective-1'],
-  gasPriceStep: {
-    low: 0.003,
-    average: 0.005,
-    high: 0.007
-  }
-};
-
-const OraiBToken: BridgeAppCurrency = {
-  coinDenom: 'ORAIB',
-  coinMinimalDenom: 'uoraib',
-  coinDecimals: 6,
-  gasPriceStep: {
-    low: 0,
-    average: 0,
-    high: 0
-  }
-};
-
-const KawaiiToken: BridgeAppCurrency = {
-  coinDenom: 'ORAIE',
-  coinMinimalDenom: 'oraie',
-  coinDecimals: 18,
-  coinGeckoId: 'kawaii-islands',
-  Icon: KwtIcon,
-  gasPriceStep: {
-    low: 0,
-    average: 0.000025,
-    high: 0.00004
-  }
-};
-
 export const oraichainNetwork: CustomChainInfo = {
   rpc: 'https://rpc.orai.io',
   rest: 'https://lcd.orai.io',
@@ -310,7 +275,11 @@ export const oraichainNetwork: CustomChainInfo = {
   IconLight: OraiLightIcon,
   features: ['ibc-transfer', 'cosmwasm', 'wasmd_0.24+'],
   currencies: [
-    OraiToken,
+    {
+      ...OraiToken,
+      Icon: OraiIcon,
+      IconLight: OraiLightIcon
+    },
     {
       coinDenom: 'ATOM',
       coinGeckoId: 'cosmos',
@@ -626,7 +595,10 @@ export const chainInfos: CustomChainInfo[] = [
     // features: ['ibc-transfer'],
     features: ['ibc-transfer', 'ibc-go', 'stargate', 'eth-address-gen', 'eth-key-sign'],
     currencies: [
-      KawaiiToken,
+      {
+        ...KawaiiToken,
+        Icon: KwtIcon
+      },
       {
         coinDenom: 'MILKY',
         coinGeckoId: 'milky-token',

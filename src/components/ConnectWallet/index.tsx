@@ -30,7 +30,6 @@ import {
   getListAddressCosmosByLeapSnap,
   getAddressBySnap
 } from 'helper';
-import { network } from 'config/networks';
 import MetamaskImage from 'assets/images/metamask.png';
 import LeapImage from 'assets/images/leap-cosmos-logo.svg';
 import OwalletImage from 'assets/images/owallet-logo.png';
