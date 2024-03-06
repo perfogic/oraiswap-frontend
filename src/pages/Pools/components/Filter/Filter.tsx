@@ -60,6 +60,7 @@ export const Filter: FC<FilterProps> = ({ setFilteredPools, setIsOpenNewTokenMod
     if (!pools.length) return;
 
     let filteredPools: PoolInfoResponse[];
+
     // filter by type filter: my pool || all pool
     if (typeFilter === KeyFilterPool.my_pool) {
       filteredPools = pools.filter((pool) => isPoolWithLiquidity(pool) || findBondAmount(pool) > 0);
@@ -69,7 +70,7 @@ export const Filter: FC<FilterProps> = ({ setFilteredPools, setIsOpenNewTokenMod
     filteredPools = filteredPools.filter((pool) => pool.symbols.toLowerCase().includes(searchValue.toLowerCase()));
     setFilteredPools(filteredPools);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typeFilter, searchValue, pools.length, totalRewardInfoData]);
+  }, [typeFilter, searchValue, pools, totalRewardInfoData]);
 
   return (
     <div className={styles.pool_filter}>

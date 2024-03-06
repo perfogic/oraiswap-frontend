@@ -14,7 +14,7 @@ import { useInactiveConnect } from 'hooks/useMetamask';
 import { CustomChainInfo, NetworkChainId, WalletType } from '@oraichain/oraidex-common';
 import { chainInfos, evmChains } from 'config/chainInfos';
 import { displayToast, TToastType } from 'components/Toasts/Toast';
-import { CosmjsOfflineSigner, connectSnap } from '@leapwallet/cosmos-snap-provider';
+import { CosmjsOfflineSigner, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
 import {
   cosmosNetworks,
   tronNetworks,
@@ -28,8 +28,7 @@ import {
   getListAddressCosmos,
   switchWalletTron,
   getListAddressCosmosByLeapSnap,
-  getAddressBySnap,
-  checkSnapExist
+  getAddressBySnap
 } from 'helper';
 import { network } from 'config/networks';
 import MetamaskImage from 'assets/images/metamask.png';
@@ -273,7 +272,7 @@ const ConnectWallet: FC<ModalProps> = ({}) => {
 
   const connectTronLink = async () => {
     try {
-      const { tronAddress: address } = await switchWalletTron(walletTypeActive);
+      const { tronAddress: address } = await switchWalletTron();
       loadTokenAmounts({ tronAddress: address });
       setTronAddress(address);
     } catch (ex) {
@@ -297,7 +296,7 @@ const ConnectWallet: FC<ModalProps> = ({}) => {
   const connectKeplr = async (type: any) => {
     try {
       setWalletTypeStore(type);
-      await initClient();
+      await initClient(type);
 
       const oraiAddr = await window.Keplr.getKeplrAddr();
       loadTokenAmounts({ oraiAddress: oraiAddr });
@@ -392,9 +391,10 @@ const ConnectWallet: FC<ModalProps> = ({}) => {
     await connectKeplr('keplr');
   };
   const connectDetectLeapSnap = async () => {
-    const isSnap = await checkSnapExist();
+    const isSnap = await getSnap();
     if (!isSnap) {
       await connectSnap();
+      // throw Error('Please install Metamask Leap Snap!');
     }
     await connectKeplr(leapWalletType);
   };

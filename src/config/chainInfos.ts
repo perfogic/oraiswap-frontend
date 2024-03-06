@@ -25,7 +25,6 @@ import { ReactComponent as UsdcIcon } from 'assets/icons/usd_coin.svg';
 import { ReactComponent as ScAtomIcon } from 'assets/icons/scatom.svg';
 import { ReactComponent as InjIcon } from 'assets/icons/inj.svg';
 import { ReactComponent as NobleIcon } from 'assets/icons/noble.svg';
-import { ReactComponent as NobleLightIcon } from 'assets/icons/ic_noble_light.svg';
 import { ReactComponent as TimpiIcon } from 'assets/icons/timpiIcon.svg';
 import { ReactComponent as NeutaroIcon } from 'assets/icons/neutaro.svg';
 import { ReactComponent as OrchaiIcon } from 'assets/icons/orchaiIcon.svg';
@@ -226,7 +225,7 @@ export const chainIcons: ChainIcon[] = [
   {
     chainId: 'noble-1',
     Icon: NobleIcon,
-    IconLight: NobleLightIcon
+    IconLight: NobleIcon
   },
   {
     chainId: 'Neutaro-1',
@@ -317,7 +316,7 @@ export const oraichainNetwork: CustomChainInfo = {
 
   Icon: OraiIcon,
   IconLight: OraiLightIcon,
-  features: ['ibc-transfer', 'cosmwasm', 'wasmd_0.24+', 'eip191'],
+  features: ['ibc-transfer', 'cosmwasm', 'wasmd_0.24+'],
   currencies: [
     OraiToken,
     {

@@ -7,7 +7,7 @@ export default class Metamask extends EvmWallet {
   private provider: Web3Provider;
 
   public checkEthereum() {
-    if (window.ethereumDapp) {
+    if (window.ethereum) {
       return true;
     }
 
@@ -17,12 +17,12 @@ export default class Metamask extends EvmWallet {
 
   public getSigner() {
     // used 'any' to fix the following bug: https://github.com/ethers-io/ethers.js/issues/1107 -> https://github.com/Geo-Web-Project/cadastre/pull/220/files
-    if (!this.provider) this.provider = new ethers.providers.Web3Provider(window.ethereumDapp, 'any');
+    if (!this.provider) this.provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
     return this.provider.getSigner();
   }
 
   public isWindowEthereum() {
-    return !!window.ethereumDapp;
+    return !!window.ethereum;
   }
 
   public isTron(chainId: string | number) {
@@ -30,7 +30,7 @@ export default class Metamask extends EvmWallet {
   }
 
   public checkTron() {
-    if (window.tronWebDapp && window.tronLinkDapp) {
+    if (window.tronWeb && window.tronLink) {
       return true;
     }
 
@@ -40,7 +40,7 @@ export default class Metamask extends EvmWallet {
 
   public async switchNetwork(chainId: string | number) {
     if (this.checkEthereum()) {
-      await window.ethereumDapp.request!({
+      await window.ethereum.request!({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0x' + Number(chainId).toString(16) }]
       });
@@ -49,7 +49,7 @@ export default class Metamask extends EvmWallet {
 
   public async getEthAddress() {
     if (this.checkEthereum()) {
-      const [address] = await window.ethereumDapp.request({
+      const [address] = await window.ethereum.request({
         method: 'eth_requestAccounts',
         params: []
       });

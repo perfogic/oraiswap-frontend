@@ -120,7 +120,7 @@ export const useGetPools = () => {
     placeholderData: [],
     staleTime: 5 * 60 * 1000
   });
-  return pools.filter(Boolean);
+  return pools;
 };
 
 export type GetStakedByUserQuery = {

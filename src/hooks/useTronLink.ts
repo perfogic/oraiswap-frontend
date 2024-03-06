@@ -30,8 +30,7 @@ export function useTronEventListener() {
   async function handleTronLink() {
     const { tronLink, tronWeb } = window;
     if (tronLink && tronWeb) {
-      // @ts-ignore
-      const addressTronMobile = await window.tronLinkDapp.request({
+      const addressTronMobile = await window.tronLink.request({
         method: 'tron_requestAccounts'
       });
       // TODO: Check owallet mobile

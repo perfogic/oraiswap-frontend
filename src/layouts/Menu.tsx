@@ -5,7 +5,7 @@ import { ReactComponent as MenuIcon } from 'assets/icons/menu.svg';
 import LogoFullImgLight from 'assets/images/OraiDEX_full_light.svg';
 import LogoFullImgDark from 'assets/images/OraiDEX_full_dark.svg';
 import classNames from 'classnames';
-// import ConnectWallet from 'components/ConnectWallet';
+import ConnectWallet from 'components/ConnectWallet';
 import TooltipContainer from 'components/ConnectWallet/TooltipContainer';
 import { TToastType, displayToast } from 'components/Toasts/Toast';
 import { ThemeContext } from 'context/theme-context';
@@ -14,7 +14,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Menu.module.scss';
 import BuyOraiModal from './BuyOraiModal';
-import { WalletManagement } from 'components/WalletManagement/WalletManagement';
 
 const Menu: React.FC = () => {
   const location = useLocation();
@@ -100,7 +99,7 @@ const Menu: React.FC = () => {
       {renderLink('/co-harvest', 'CO-HARVEST', setLink)}
       {renderLink('https://orderbook.oraidex.io', 'ORDER BOOK', () => {}, true)}
       {renderLink('https://futures.oraidex.io', 'FUTURES', () => {}, true)}
-      {/* {renderLink('https://beta.oraidex.io', 'BETA', () => {}, true)} */}
+      {renderLink('https://beta.oraidex.io', 'BETA', () => {}, true)}
       {mobileMode ? (
         <>
           {renderLink('#', 'BUY ORAI', () => {
@@ -164,7 +163,7 @@ const Menu: React.FC = () => {
                 <img src={darkTheme ? LogoFullImgLight : LogoFullImgDark} alt="logo" />
               </Link>
             </div>
-            <WalletManagement />
+            <ConnectWallet />
           </div>
 
           <div ref={ref} className={classNames(styles.sideMenu, { [styles.open]: open })}>
@@ -182,7 +181,7 @@ const Menu: React.FC = () => {
           </div>
           <div className={classNames(styles.connect_wallet_wrapper)}>
             <span>
-              <WalletManagement />
+              <ConnectWallet />
             </span>
           </div>
         </div>

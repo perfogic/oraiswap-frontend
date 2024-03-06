@@ -4,36 +4,42 @@ import { OfflineSigner } from '@cosmjs/proto-signing';
 import { Coin, GasPrice } from '@cosmjs/stargate';
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { Stargate } from '@injectivelabs/sdk-ts';
+import { getSnap } from '@leapwallet/cosmos-snap-provider';
 import { network } from 'config/networks';
-import { MetamaskOfflineSigner } from './eip191';
-import { getWalletByNetworkCosmosFromStorage } from 'helper';
+import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
 export type clientType = 'cosmwasm' | 'injective';
 
 const collectWallet = async (chainId: string) => {
   const keplr = await window.Keplr.getKeplr();
-  if (keplr) return await keplr.getOfflineSignerAuto(chainId);
-  return await MetamaskOfflineSigner.connect(window.ethereum, network.denom);
+  const snapInstalled = await getSnap();
+  if (keplr) {
+    // use keplr instead
+    return await keplr.getOfflineSignerAuto(chainId);
+  }
+  if (snapInstalled) {
+    return new CosmjsOfflineSigner(chainId);
+  }
+  if (!keplr && !snapInstalled) {
+    throw new Error('You have to install Keplr first if you do not use a mnemonic to sign transactions');
+  }
 };
 
 const getCosmWasmClient = async (
   config: { signer?: OfflineSigner; chainId?: string; rpc?: string },
   options?: cosmwasm.SigningCosmWasmClientOptions
 ) => {
-  try {
-    const { chainId, rpc, signer } = config;
-    const wallet = signer ?? (await collectWallet(chainId));
-    const defaultAddress = (await wallet.getAccounts())[0];
-    const client = await cosmwasm.SigningCosmWasmClient.createWithSigner(
-      window.client.tmClient,
-      wallet,
-      options ?? {
-        gasPrice: GasPrice.fromString(network.fee.gasPrice + network.denom)
-      }
-    );
-    return { wallet, client, defaultAddress };
-  } catch (error) {
-    console.error('error getCosmwasmClient: ', error);
-  }
+  const { chainId, rpc, signer } = config;
+  const wallet = signer ?? (await collectWallet(chainId));
+  const defaultAddress = (await wallet.getAccounts())[0];
+  const tmClient = await Tendermint37Client.connect(rpc ?? (network.rpc as string));
+  const client = await cosmwasm.SigningCosmWasmClient.createWithSigner(
+    tmClient,
+    wallet,
+    options ?? {
+      gasPrice: GasPrice.fromString(network.fee.gasPrice + network.denom)
+    }
+  );
+  return { wallet, client, defaultAddress };
 };
 
 export const connectWithSigner = async (rpc: string, signer: OfflineSigner, clientType: clientType, options?: any) => {
@@ -48,9 +54,6 @@ export const connectWithSigner = async (rpc: string, signer: OfflineSigner, clie
 };
 
 class CosmJs {
-  static getWalletByFromStorage() {
-    return getWalletByNetworkCosmosFromStorage();
-  }
   static async execute(data: {
     prefix?: string;
     walletAddr: string;
@@ -62,9 +65,9 @@ class CosmJs {
     memo?: string;
   }) {
     try {
-      const walletType = this.getWalletByFromStorage();
       const keplr = await window.Keplr.getKeplr();
-      if (keplr || (walletType && walletType === 'eip191')) {
+      const isEnableLeapSnap = await getSnap();
+      if (keplr || isEnableLeapSnap) {
         await window.Keplr.suggestChain(network.chainId);
         const result = await window.client.execute(
           data.walletAddr,
@@ -93,9 +96,9 @@ class CosmJs {
     memo?: string;
   }) {
     try {
-      const walletType = this.getWalletByFromStorage();
       const keplr = await window.Keplr.getKeplr();
-      if (keplr || (walletType && walletType === 'eip191')) {
+      const isEnableLeapSnap = await getSnap();
+      if (keplr || isEnableLeapSnap) {
         await window.Keplr.suggestChain(network.chainId);
         const result = await window.client.executeMultiple(data.walletAddr, data.msgs, 'auto', data.memo);
         return {
